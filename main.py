@@ -4,7 +4,7 @@ import math, cmath
 
 #The function we want to approximate:
 def f(t):
-    return math.cos(2*math.pi*t)+1j*math.sin(2*math.pi*t)
+    return 5*math.cos(2*math.pi*t)+1j*math.sin(2*math.pi*t)
 
 def integrand(x, n):
     return f(x)*math.e**(-n*2*math.pi*1j*x)
@@ -51,16 +51,15 @@ for t in intervall:
     ptf.draw(win)
 
 
-N = 20
+N = 10
 
 origin = Point(ctr, ctr)
 
 vecList = []
 tipList = []
 
-nVec = np.linspace(-N/2, N/2, num=N)
+nVec = np.linspace(-N/2, N/2, N+1)
 print(nVec)
-
 points = []
 
 
@@ -74,7 +73,6 @@ for t in intervall:
     im = 0
     for n in nVec:
         z=scale*c(n)*math.e**(n*2*math.pi*1j*t)
-        print(c(n))
         re = re + z.real
         im = im + z.imag
         newPt = Point(ctr+re, ctr-im)
