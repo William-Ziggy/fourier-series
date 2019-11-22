@@ -38,7 +38,7 @@ setCoords method and mouse and keyboard interaction methods.
 The library provides the following graphical objects:
     Point
     Line
-    Circle
+
     Oval
     Rectangle
     Polygon

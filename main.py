@@ -4,13 +4,13 @@ import math, cmath
 
 #The function we want to approximate:
 def f(t):
-    return 5*math.cos(2*math.pi*t)+1j*math.sin(2*math.pi*t)
+    return t**3+1j*t-1-1j
 
 def integrand(x, n):
     return f(x)*math.e**(-n*2*math.pi*1j*x)
 
 def c(n):
-    num_iterations = 100
+    num_iterations = 1000
 
     delta_x = 1/num_iterations
 
@@ -32,78 +32,95 @@ size = 1000 #Size of window
 ctr = size/2-1 #Centre of window
 
 
-win = GraphWin("Mitt fönster", size, size) #Window Initialization
+win = GraphWin("Fourier Series", size, size) #Window Initialization
 win.setBackground("black")
 win.autoflush = False
 
-antal = 200
+antal = 100
 
 points = []
 
-scale = 100
+scale = 600
 import numpy as np
 
 intervall = np.linspace(0, 1, num=antal)
 #Plotting the actual function
 for t in intervall:
     ptf = Point(ctr+scale*f(t).real, ctr-scale*f(t).imag)
-    ptf.setFill("white")
+    ptf.setFill("blue")
     ptf.draw(win)
 
 
-N = 10
+N = 20
 
 origin = Point(ctr, ctr)
 
 vecList = []
-tipList = []
+cirList = []
+lines = []
 
 nVec = np.linspace(-N/2, N/2, N+1)
-print(nVec)
 points = []
 
 
 cList = []
 
-for t in intervall:
+for n in nVec:
+    cList.append(c(n))
 
-    lastPt = origin
+testN = -N/2
+print(scale*cList[(n+N/2).astype(int)]*math.e**(testN*2*math.pi*1j*t))
 
-    re = 0
-    im = 0
-    for n in nVec:
-        z=scale*c(n)*math.e**(n*2*math.pi*1j*t)
-        re = re + z.real
-        im = im + z.imag
-        newPt = Point(ctr+re, ctr-im)
+while True:
+    for t in intervall:
 
-        vec = Line(lastPt, newPt)
-        vec.setWidth(2)
-        vec.setFill('white')
+        lastPt = origin
 
-        tip = Circle(newPt, 2)
-        tip.setFill('red')
+        re = 0
+        im = 0
+        for n in nVec:
+            z=scale*cList[(n+N/2).astype(int)]*math.e**(n*2*math.pi*1j*t)
+            re = re + z.real
+            im = im + z.imag
 
-        vec.draw(win)
-        tip.draw(win)
+            newPt = Point(ctr+re, ctr-im)
 
-        vecList.append(vec)
-        tipList.append(tip)
+            dx = newPt.getX()-lastPt.getX()
+            dy = newPt.getY()-lastPt.getY()
+            mag = math.sqrt(dx**2+dy**2)
 
-        lastPt = newPt
+            vec = Line(lastPt, newPt)
+            vec.setWidth(2)
+            vec.setFill('white')
+            vec.setArrow("last")
 
-    points.append(newPt)
-    if not t==0:
-        line = Line(points[-2], points[-1])
-        line.setFill('yellow')
-        line.draw(win)
+            cir = Circle(lastPt, mag)
+            cir.setOutline('gray')
+
+            vec.draw(win)
+            cir.draw(win)
+
+            vecList.append(vec)
+
+            cirList.append(cir)
+
+            lastPt = newPt
+
+        points.append(newPt)
+        if not t==0:
+            line = Line(points[-2], points[-1])
+            line.setFill('yellow')
+            line.draw(win)
+            lines.append(line)
 
 
-    update(60)
 
-    for v, tipv in zip(vecList, tipList):
-        v.undraw()
-        tipv.undraw()
+        update(10)
 
+        for v, cirv in zip(vecList, cirList):
+            v.undraw()
+            cirv.undraw()
+    for l in lines:
+        l.undraw()
 
 win.getMouse()
