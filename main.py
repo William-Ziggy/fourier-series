@@ -4,7 +4,7 @@ import math, cmath
 
 #The function we want to approximate:
 def f(t):
-    return t**3+1j*t-1-1j
+    return t**2+1j*t
 
 def integrand(x, n):
     return f(x)*math.e**(-n*2*math.pi*1j*x)
@@ -40,7 +40,7 @@ antal = 100
 
 points = []
 
-scale = 600
+scale = 400
 import numpy as np
 
 intervall = np.linspace(0, 1, num=antal)
@@ -59,17 +59,16 @@ vecList = []
 cirList = []
 lines = []
 
-nVec = np.linspace(-N/2, N/2, N+1)
 points = []
 
 
 cList = []
 
+nVec = np.linspace(-N/2, N/2, N+1)
+
 for n in nVec:
     cList.append(c(n))
 
-testN = -N/2
-print(scale*cList[(n+N/2).astype(int)]*math.e**(testN*2*math.pi*1j*t))
 
 while True:
     for t in intervall:
@@ -78,33 +77,41 @@ while True:
 
         re = 0
         im = 0
-        for n in nVec:
-            z=scale*cList[(n+N/2).astype(int)]*math.e**(n*2*math.pi*1j*t)
-            re = re + z.real
-            im = im + z.imag
+        for n in range(0, N//2+1):
 
-            newPt = Point(ctr+re, ctr-im)
+            if n!=0:
+                factor = [-1, 1]
+            else:
+                factor = [1]
 
-            dx = newPt.getX()-lastPt.getX()
-            dy = newPt.getY()-lastPt.getY()
-            mag = math.sqrt(dx**2+dy**2)
+            for f in factor:
+                index = f*n+N//2
+                z=scale*cList[index]*math.e**(f*n*2*math.pi*1j*t)
+                re = re + z.real
+                im = im + z.imag
 
-            vec = Line(lastPt, newPt)
-            vec.setWidth(2)
-            vec.setFill('white')
-            vec.setArrow("last")
+                newPt = Point(ctr+re, ctr-im)
 
-            cir = Circle(lastPt, mag)
-            cir.setOutline('gray')
+                dx = newPt.getX()-lastPt.getX()
+                dy = newPt.getY()-lastPt.getY()
+                mag = math.sqrt(dx**2+dy**2)
 
-            vec.draw(win)
-            cir.draw(win)
+                vec = Line(lastPt, newPt)
+                vec.setWidth(2)
+                vec.setFill('white')
+                vec.setArrow("last")
 
-            vecList.append(vec)
+                cir = Circle(lastPt, mag)
+                cir.setOutline('gray')
 
-            cirList.append(cir)
+                vec.draw(win)
+                cir.draw(win)
 
-            lastPt = newPt
+                vecList.append(vec)
+
+                cirList.append(cir)
+
+                lastPt = newPt
 
         points.append(newPt)
         if not t==0:
